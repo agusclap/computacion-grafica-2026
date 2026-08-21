@@ -1,0 +1,8 @@
+# Artefactos de compilación (generados por el Makefile de cada práctico)
+build/
+bin/
+
+# Windows / editores
+*.o
+*.exe
+.vscode/
