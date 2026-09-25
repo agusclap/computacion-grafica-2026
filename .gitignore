@@ -1,8 +1,40 @@
-# Artefactos de compilación (generados por el Makefile de cada práctico)
+# ------------------------------------------------------------------------------
+# Artefactos de compilación (los genera el Makefile de cada práctico)
+# ------------------------------------------------------------------------------
 build/
 bin/
-
-# Windows / editores
 *.o
+*.d
+*.a
 *.exe
+*.dll
+
+# ------------------------------------------------------------------------------
+# Volcados de verificación
+#
+# Los `ogl-app captura` / `ogl-app captura sinref` escriben el framebuffer a
+# PPM en el directorio de trabajo. Son temporales: la evidencia que se conserva
+# está convertida a PNG en practicoNN-*/docs/, que sí se versiona.
+# ------------------------------------------------------------------------------
+*.ppm
+captura-*.png
+sinref-*.png
+
+# ------------------------------------------------------------------------------
+# Material de la cátedra
+#
+# No es trabajo propio y son 36 MB de PDFs. Se mantienen en el disco local
+# porque son la fuente de cada práctico, pero no entran al historial de git.
+# ------------------------------------------------------------------------------
+teorico-practico/
+
+# ------------------------------------------------------------------------------
+# Editores y sistema operativo
+# ------------------------------------------------------------------------------
 .vscode/
+.idea/
+*.swp
+*~
+Thumbs.db
+desktop.ini
+.DS_Store

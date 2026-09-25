@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------------------
-# Makefile - proyecto OpenGL inicial (ventana GLFW + GLAD).
+# Makefile - Practico 02: del triangulo a la malla (cubo indexado).
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
@@ -16,18 +16,20 @@ INC_DIRS = \
 # ------------------------------------------------------------------------------
 # Configurar dirs de librerias externas y dirs locales al proyecto
 # (fuentes para compilar).
-# Recolección automática de fuentes. Mantener DISJUNTO de SRC_DIR
-# (si no, main.o se linkearía dos veces).
-# Se puede usar LIB_DIRS para estructurar el proyecto con subdirectorios.
-# Ej.
-#LIB_DIRS = \
-#    ./src/input
+# Recoleccion automatica de fuentes. Mantener DISJUNTO de SRC_DIR
+# (si no, main.o se linkearia dos veces).
+#
+# Recomendacion 1 de la guia: "solo hay que agregar el subdirectorio de los
+# modulos a la variable LIB_DIRS". El wildcard NO es recursivo, asi que hay que
+# listar cada subcarpeta con fuentes.
 LIB_DIRS = \
     $(GLAD_LIB_DIRS) \
-    ./src/resources
+    ./src/resources \
+    ./src/mesh \
+    ./src/shader
 
 # ------------------------------------------------------------------------------
-# Dir del main de la aplicación y nombre del archivo de código fuente
+# Dir del main de la aplicacion y nombre del archivo de codigo fuente
 SRC_DIR  = \
     ./src                     # main.cpp
 
@@ -38,7 +40,7 @@ MAIN_CXX     = main
 PROJECT_NAME = ogl-app
 
 # ------------------------------------------------------------------------------
-# Configurar linkeo de librerías
+# Configurar linkeo de librerias
 ifeq ($(OS), Windows_NT)
         PROJECT_LDLIBS = -L/mingw64/lib -lglfw3 -lopengl32 -lgdi32 -lpthread
 else
@@ -46,8 +48,8 @@ else
 endif
 
 # ------------------------------------------------------------------------------
-# Configurar opciones de compilación
-# Para compilar con símbolos para debug usar: -g -Wall
+# Configurar opciones de compilacion
+# Para compilar con simbolos para debug usar: -g -Wall
 USERCPPFLAGS = -O2 -Wall -Wextra
 
 # ------------------------------------------------------------------------------
@@ -59,14 +61,16 @@ endif
 include ./Makefile.master
 
 # ------------------------------------------------------------------------------
-# Practico 01 - Parte 2: prueba del ResourceManager.
+# Verificacion pedida por la guia: "No hay un solo glDelete* en el main.cpp".
 # Va DESPUES del include para no robarle el default goal a 'build'.
-# C++ puro: no linkea GLFW ni OpenGL.
-.PHONY: test-rm
-test-rm:
-	@mkdir -p $(BIN_DIR)
-	$(CXX) -std=c++17 -Wall -Wextra -I ./src \
-	    ./src/resources/ResourceManager.cpp \
-	    ./tests/test_resource_manager.cpp \
-	    -o $(BIN_DIR)/test-rm
-	@./$(BIN_DIR)/test-rm
+# Se quitan los comentarios antes de buscar (si no, el propio comentario que
+# documenta la condicion daria un falso positivo) y se exige el parentesis de
+# llamada, para no confundir una mencion con una invocacion.
+.PHONY: check-main
+check-main:
+	@if sed 's://.*::' ./src/main.cpp | \
+	    grep -nE 'glDelete[A-Za-z]*[[:space:]]*\(' ; then \
+	    echo "FALLA: hay llamadas glDelete* en main.cpp"; exit 1; \
+	else \
+	    echo "OK: no hay ninguna llamada glDelete* en main.cpp"; \
+	fi
